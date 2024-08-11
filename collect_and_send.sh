@@ -128,7 +128,7 @@ SERIAL_NUMBER=$(cat /sys/class/dmi/id/product_serial)
 MANUFACTURER=$(dmidecode -s system-manufacturer)
 
 # Battery health (you can customize this based on your system)
-BATTERY_HEALTH=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -i 'state' | awk '{print $2}')
+BATTERY_HEALTH=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -i 'capacity' | awk '{print $2}')
 
 # Laptop display size (diagonal measurement in inches)
 DISPLAY_SIZE=$(lshw -C display | grep -i 'size' | awk -F': ' '{print $2}')
