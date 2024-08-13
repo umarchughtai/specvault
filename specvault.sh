@@ -135,7 +135,7 @@ BATTERY_HEALTH=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -
 DISPLAY_SIZE=$(lshw -C display | grep -i 'size' | awk -F': ' '{print $2}')
 
 # Hard disk information (including type and available slots)
-HDD_INFO=$(lsblk -o NAME,SIZE,TYPE | grep 'sd' | awk '{print $1, $2, $3}')
+HDD_INFO=$(lsblk -o NAME,MODEL | grep 'sd' | awk '{print $2, $3}' | head -n 1)
 HDD_SLOTS=$(lsblk -o NAME | grep 'sd' | wc -l)
 
 # RAM type and size using free -h
