@@ -104,7 +104,8 @@ HOSTNAME=$(hostname)
 CPU=$(lscpu | grep 'Model name' | awk -F': ' '{print $2}')
 #RAM=$(free -h | awk '/^Mem:/ {print $2}')
 STORAGE=$(df -h | awk '$NF=="/" {print $2}')
-NETWORK_INTERFACE=$(ip link | awk -F': ' '$0 !~ "lo|vir|wl|^[^0-9]"{print $2; exit}')
+#NETWORK_INTERFACE=$(ip link | awk -F': ' '$0 !~ "lo|vir|wl|^[^0-9]"{print $2; exit}')
+NETWORK_INTERFACE=$(inxi -N | awk -F ': ' '/Device/ {gsub(" driver.*", "", $2); gsub("Network ", "", $2); sub("Device-", "", $2); if (i == 1) print "Device-" ++i ": " $2; else print "Device-" ++i ": " $3}')
 OS_VERSION=$(lsb_release -d | awk -F'\t' '{print $2}')
 
 # Get GPU information using nvidia-smi (if available)
@@ -189,6 +190,4 @@ fi
 # Run the script
 #collect_system_specs
 collect_and_send
-inxi -N | awk -F ': ' '/Device/ {gsub(" driver.*", "", $2); gsub("Network ", "", $2); sub("Device-", "", $2); if (i == 1) print "Device-" ++i ": " $2; else print "Device-" ++i ": " $3}'
-
-
+#inxi -N | awk -F ': ' '/Device/ {gsub(" driver.*", "", $2); gsub("Network ", "", $2); sub("Device-", "", $2); if (i == 1) print "Device-" ++i ": " $2; else print "Device-" ++i ": " $3}'
