@@ -157,7 +157,7 @@ if [ -z "$GPU_INFO" ]; then
 fi
 
 # Non-NVIDIA GPU information (if available)
-NON_NVIDIA_GPU_INFO=$(lshw -C display | grep -i -A 1 'VGA compatible controller' | grep -v 'NVIDIA' | awk -F': ' '{print $2}')
+NON_NVIDIA_GPU_INFO=$(lshw -C display | grep -i 'product' | grep -v 'NVIDIA' | awk -F': ' '{print $2}')
 if [ -z "$NON_NVIDIA_GPU_INFO" ]; then
    NON_NVIDIA_GPU_INFO="NO VGA Compatible Display Adapter Available"
 fi
@@ -167,6 +167,7 @@ SERIAL_NUMBER=$(cat /sys/class/dmi/id/product_serial)
 
 # Manufacturer or brand of the system
 MANUFACTURER=$(dmidecode -s system-manufacturer)
+MODEL_NUMBER=$(dmidecode -s system-product-name)
 
 # Battery health (you can customize this based on your system)
 BATTERY_HEALTH=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -i 'capacity' | awk '{print $2}')
@@ -179,19 +180,17 @@ HDD_INFO=$(lsblk -o NAME,MODEL | grep 'sd' | awk '{print $2}' | head -n 1)
 HDD_SLOTS=$(lsblk -o NAME | grep 'sd' | wc -l)
 
 # RAM type and size using free -h
-RAM_TOTAL=$(free -h | awk '/^Mem:/ {print $2}')
+#RAM_TOTAL=$(free -h | awk '/^Mem:/ {print $2}')
+RAM_TOTAL=$(dmidecode -t memory | grep 'Size:' | grep -v 'No' | awk '{print $2, $3}')
 RAM_TYPE=$(dmidecode -t memory | grep 'Type:' | grep -v 'Unknown' | awk '{print $2}' | head -n 1)
 
-# Free RAM slots
-FREE_RAM_SLOTS=$(dmidecode -t memory | grep 'Size: No Module Installed' | wc -l)
-
 # Combine RAM info and free slots
-RAM_INFO="$RAM_TOTAL ($RAM_TYPE), Free Slots: $FREE_RAM_SLOTS"
+RAM_INFO="$RAM_TOTAL ($RAM_TYPE)"
 
 # Insert data into the database
-mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" <<EOF
+mycli -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" <<EOF
 INSERT INTO Machine (CPU, RAM, NetworkInterface, GPU, NonNvidiaGPU, SerialNumber, Manufacturer, BatteryHealth, DisplaySize, Storage, Timestamp, UserName)
-VALUES ('$CPU', '$RAM_INFO', '$NETWORK_INTERFACE', '$GPU_INFO', '$NON_NVIDIA_GPU_INFO', '$SERIAL_NUMBER', '$MANUFACTURER', '$BATTERY_HEALTH', '$DISPLAY_SIZE', '$HDD_INFO ($HDD_SLOTS slots)', NOW(),'Weblogics');
+VALUES ('$CPU', '$RAM_INFO', '$NETWORK_INTERFACE', '$GPU_INFO', '$NON_NVIDIA_GPU_INFO', '$SERIAL_NUMBER', '$MANUFACTURER', '$BATTERY_HEALTH', '$DISPLAY_SIZE', '$HDD_INFO', NOW(),'Weblogics');
 EOF
 
 if [ $? -eq 0 ]; then
