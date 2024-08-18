@@ -236,3 +236,4 @@ fi
 #collect_system_specs
 collect_and_send
 #inxi -N | awk -F ': ' '/Device/ {gsub(" driver.*", "", $2); gsub("Network ", "", $2); sub("Device-", "", $2); if (i == 1) print "Device-" ++i ": " $2; else print "Device-" ++i ": " $3}'
+#inxi -M | grep -i 'model' | awk -F': ' '{print $3}'
