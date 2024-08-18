@@ -6,25 +6,54 @@ function show_error() {
     exit 1
 }
 
+# Function to display a welcome message and exit
+function welcome_msg(){
+echo " ------------------------------------------------- "
+echo "       ___ ___ ___ _____   ___  _   _ _  _____     "
+echo "      / __| _ \ __/ __\ \ / /_\| | | | ||_   _|    "
+echo "      \__ \  _/ _| (__ \ V / _ \ |_| | |__| |      "
+echo "      |___/_| |___\___| \_/_/ \_\___/|____|_|      "
+echo "                                                   "
+echo " ------------------------------------------------- "
+echo " SpecVault is an automated specfication collection "
+echo " system that will read the hardware specs. It will "
+echo " automatically upload the collected data to cloud  " 
+echo " platform. Ensure you have proper connectivity to  "
+echo " the Internet for successful uploading.            "
+echo " Once data is successfully uploaded into the cloud,"
+echo " visit https://specvault.web-logics.com/ to review "
+echo " ------------------------------------------------- "
+}
+
 # Function to list the connected network interfaces
 function list_interfaces() {
     local wlan_interface=$(ip link show | awk -F: '$0 ~ "wlan"{print $2}' | tr -d ' ')
     if [ -n "$wlan_interface" ]; then
         local ip_address=$(ip -4 addr show "$wlan_interface" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
         local ssid=$(iwgetid -r)
-        echo "WLAN Interface: $wlan_interface"
-        echo "IP Address: $ip_address"
-        echo "Connected SSID: $ssid"
+        echo " ------- WLAN Connected ------- "
+        echo " WLAN Interface: $wlan_interface"
+        echo " IP Address: $ip_address"
+        echo " Connected SSID: $ssid"
+        echo " ------------------------------ "
     else
         local eth_interface=$(ip link show | awk -F: '$0 ~ "eth"{print $2}' | tr -d ' ')
         if [ -n "$eth_interface" ]; then
             local ip_address=$(ip -4 addr show "$eth_interface" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
             local gateway=$(ip route | grep default | awk '{print $3}')
-            echo "Ethernet Interface: $eth_interface"
-            echo "IP Address: $ip_address"
-            echo "Default Gateway: $gateway"
+            echo " ------- Ethernet Connected ------- "
+            echo " Ethernet Interface: $eth_interface"
+            echo " IP Address: $ip_address"
+            echo " Default Gateway: $gateway"
+            echo " ---------------------------------- " 
         else
-            echo "No WLAN or Ethernet interface found."
+             echo " ------- Error in Connection -------- "
+             echo " No WLAN or Ethernet interface found. "
+             echo " Ensure you are connected to Internet "
+             echo " via WLAN or Eth, otherwise specs will"
+             echo " be saved in a local file in the USB &"
+             echo " will not be available in the cloud.  "
+             echo " ------------------------------------ "
         fi
     fi
     check_connectivity
@@ -71,12 +100,19 @@ function validate_interface() {
 # Function to check internet connectivity
 function check_connectivity() {
     # Your connectivity check logic here (e.g., ping)
+    echo " ----- Checking Connectivity to Internet ----- "
     ping -c 4 8.8.8.8
     if [ $? -eq 0 ]; then
-        echo "Internet connectivity confirmed." 
+        echo "                  SUCCESS                      "
+        echo "       Internet Connectivity Confirmed         "
+        echo "       PROCEEDING WITH SPECS COLLECTION        "
+        echo " --------------------------------------------- "
         return 0
     else
-        echo "Failed to connect to the internet. Please choose the correct interface or ensure internet connectivity"
+        echo "                   ERROR                       "
+        echo "         Failed to connect to Internet         "
+        echo "  PROCEEDING WITH LOCAL SAVING CAPABILITY ONLY "
+        echo " --------------------------------------------- "        
         return 1
     fi
 }
@@ -150,7 +186,7 @@ FREE_RAM_SLOTS=$(dmidecode -t memory | grep 'Size: No Module Installed' | wc -l)
 RAM_INFO="$RAM_TOTAL ($RAM_TYPE), Free Slots: $FREE_RAM_SLOTS"
 
 # Insert data into the database
-mycli -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" <<EOF
+mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" <<EOF
 INSERT INTO Machine (CPU, RAM, NetworkInterface, GPU, NonNvidiaGPU, SerialNumber, Manufacturer, BatteryHealth, DisplaySize, Storage, Timestamp, UserName)
 VALUES ('$CPU', '$RAM_INFO', '$NETWORK_INTERFACE', '$GPU_INFO', '$NON_NVIDIA_GPU_INFO', '$SERIAL_NUMBER', '$MANUFACTURER', '$BATTERY_HEALTH', '$DISPLAY_SIZE', '$HDD_INFO ($HDD_SLOTS slots)', NOW(),'Weblogics');
 EOF
@@ -172,7 +208,7 @@ fi
 if [ -n "$1" ]; then
     chosen_interface="$1"
 else
-    echo "Welcome to Bolt ASC Bolt ASC is an automated specfication collection system that will read the hardware specs. It will automatically upload the collected data to a cloud platform to which you have subscribed. We will need internet connectivity for pushing the data. Let's Start "  10 60
+    welcome_msg
     list_interfaces
 fi
 
