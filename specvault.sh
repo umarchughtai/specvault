@@ -103,12 +103,14 @@ function check_connectivity() {
     echo " ----- Checking Connectivity to Internet ----- "
     ping -c 4 8.8.8.8
     if [ $? -eq 0 ]; then
+        echo " --------------------------------------------- "
         echo "                  SUCCESS                      "
         echo "       Internet Connectivity Confirmed         "
         echo "       PROCEEDING WITH SPECS COLLECTION        "
         echo " --------------------------------------------- "
         return 0
     else
+        echo " --------------------------------------------- "
         echo "                   ERROR                       "
         echo "         Failed to connect to Internet         "
         echo "  PROCEEDING WITH LOCAL SAVING CAPABILITY ONLY "
@@ -135,6 +137,7 @@ MYSQL_USER="weblo1cs_bolt_user"
 MYSQL_PASSWORD="MyPassword@123"
 MYSQL_DATABASE="weblo1cs_Bolt_laptop_data"
 
+echo " ***** Collecting System Specifications ***** "
 # Collect system specifications
 HOSTNAME=$(hostname)
 CPU=$(lscpu | grep 'Model name' | awk -F': ' '{print $2}')
@@ -192,10 +195,16 @@ VALUES ('$CPU', '$RAM_INFO', '$NETWORK_INTERFACE', '$GPU_INFO', '$NON_NVIDIA_GPU
 EOF
 
 if [ $? -eq 0 ]; then
-    echo "Specs Collected Successfully and DB Updated"
+    echo " ------------------------------------------ "
+    echo "                 SUCCESS                    "
+    echo "Specs Collected and DB Updated in the cloud "
+    echo " ------------------------------------------ "
     exit 0
 else
-    echo "Error inserting data into the DB. Saving Specs to local file"
+    echo " --------------------------------------------- "
+    echo "                   ERROR                       "
+    echo " Error inserting into DB. Saving to local file "
+    echo " --------------------------------------------- "
     collect_system_specs
 fi
 }
