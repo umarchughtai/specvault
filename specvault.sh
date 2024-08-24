@@ -144,7 +144,7 @@ CPU=$(lscpu | grep 'Model name' | awk -F': ' '{print $2}')
 #RAM=$(free -h | awk '/^Mem:/ {print $2}')
 STORAGE=$(df -h | awk '$NF=="/" {print $2}')
 #NETWORK_INTERFACE=$(ip link | awk -F': ' '$0 !~ "lo|vir|wl|^[^0-9]"{print $2; exit}')
-NETWORK_INTERFACE=$(inxi -N | awk -F ': ' '/Device/ {gsub(" driver.*", "", $2); gsub("Network ", "", $2); sub("Device-", "", $2); if (i == 1) print "Device-" ++i ": " $2; else print "Device-" ++i ": " $3}')
+NETWORK_INTERFACE=$(inxi -N | head -n 5)
 OS_VERSION=$(lsb_release -d | awk -F'\t' '{print $2}')
 
 # Get GPU information using nvidia-smi (if available)
@@ -181,8 +181,9 @@ HDD_SLOTS=$(lsblk -o NAME | grep 'sd' | wc -l)
 
 # RAM type and size using free -h
 #RAM_TOTAL=$(free -h | awk '/^Mem:/ {print $2}')
-RAM_TOTAL=$(dmidecode -t memory | grep 'Size:' | grep -v 'No' | awk '{print $2, $3}')
-RAM_TYPE=$(dmidecode -t memory | grep 'Type:' | grep -v 'Unknown' | awk '{print $2}' | head -n 1)
+#RAM_TOTAL=$(dmidecode -t memory | grep 'Size:' | grep -v 'No' | awk '{print $2, $3}')
+RAM_TOTAL=$(sudo lshw -C memory | grep -A 4 'System Memory' | grep -v 'cache' | awk '/size:/{print $2}')
+RAM_TYPE=$(dmidecode -t memory | grep 'Type:' | grep -v 'Correction | grep -v 'Unknown' | awk '{print $2}' | head -n 1)
 
 # Combine RAM info and free slots
 RAM_INFO="$RAM_TOTAL ($RAM_TYPE)"
