@@ -144,7 +144,7 @@ CPU=$(lscpu | grep 'Model name' | awk -F': ' '{print $2}')
 #RAM=$(free -h | awk '/^Mem:/ {print $2}')
 STORAGE=$(df -h | awk '$NF=="/" {print $2}')
 #NETWORK_INTERFACE=$(ip link | awk -F': ' '$0 !~ "lo|vir|wl|^[^0-9]"{print $2; exit}')
-NETWORK_INTERFACE=$(inxi -N | head -n 5)
+NETWORK_INTERFACE=$(sudo lshw -class network | grep -E 'product' | awk -F': ' '{print $2}')
 OS_VERSION=$(lsb_release -d | awk -F'\t' '{print $2}')
 
 # Get GPU information using nvidia-smi (if available)
