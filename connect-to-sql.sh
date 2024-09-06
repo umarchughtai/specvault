@@ -22,7 +22,7 @@ LOT_NUMBER=$(mycli -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -D "$MY
 #echo "$LOT_NUMBER"
 
 if [ -n "$LOT_NUMBER" ]; then
-  echo "Active Lot Number: $LOT_NUMBER"
+  echo "Collecting Information Under Active Lot Number: $LOT_NUMBER"
   /etc/collect_specs_final.sh "$LOT_NUMBER"
   echo "UPDATING LOT INFORMATION"
 else
@@ -39,6 +39,15 @@ update_number_of_machines() {
   local lot_number="$1"
   local update_query="UPDATE LOTS SET RECORDED_SYSTEMS = RECORDED_SYSTEMS + 1 WHERE LOT_NUMBER='$lot_number';"
   mycli -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -D "$MYSQL_DATABASE" -e "$update_query"
+  
+  local exit_status=$?
+
+  # Check if the query was successful
+  if [ $exit_status -eq 0 ]; then
+    echo "Update successful for LOT: $lot_number."
+  else
+    echo "Error updating LOT: $lot_number. Exit status: $exit_status."
+  fi
 }
 
 update_number_of_machines "$LOT_NUMBER"

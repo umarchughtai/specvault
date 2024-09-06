@@ -174,12 +174,29 @@ MODEL_NUMBER=$(dmidecode -s system-product-name)
 # Battery health (you can customize this based on your system)
 BATTERY_HEALTH=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -i 'capacity' | awk '{print $2}')
 
-# Laptop display size (diagonal measurement in inches)
-DISPLAY_SIZE=$(hwinfo --monitor | grep -i 'Size' | awk -F': ' '{print $2}')
+# ---------- Find Display Size -----------------------------------
+# Extract the width and height in millimeters
+WIDTH=$(hwinfo --monitor | grep -i 'Size' | awk -F'[ x]' '{print $2}')
+HEIGHT=$(hwinfo --monitor | grep -i 'Size' | awk -F'[ x]' '{print $3}')
+
+# Calculate the diagonal size in millimeters
+DIAGONAL_MM=$(echo "scale=2; sqrt($WIDTH^2 + $HEIGHT^2)" | bc)
+
+# Convert the diagonal size from millimeters to inches (1 inch = 25.4 mm)
+DIAGONAL_INCHES=$(echo "scale=2; $DIAGONAL_MM / 25.4" | bc)
+
+# Extract the resolution
+RESOLUTION=$(hwinfo --monitor | grep -i 'Resolution' | awk -F': ' '{print $2}')
+
+# Combine the diagonal size and resolution into the DISPLAY_SIZE variable
+DISPLAY_SIZE="${DIAGONAL_INCHES} inches, Resolution: ${RESOLUTION}"
+
+echo "Display size and resolution: $DISPLAY_SIZE"
+
+#----------------------------------------------------------------
 
 # Hard disk information (including type and available slots)
 HDD_INFO=$(lsblk -o NAME,MODEL | grep 'sd' | awk '{print $2}' | head -n 1)
-HDD_SLOTS=$(lsblk -o NAME | grep 'sd' | wc -l)
 
 # RAM type and size using free -h
 #RAM_TOTAL=$(free -h | awk '/^Mem:/ {print $2}')
