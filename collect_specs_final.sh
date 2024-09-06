@@ -190,9 +190,6 @@ RESOLUTION=$(hwinfo --monitor | grep -i 'Resolution' | awk -F': ' '{print $2}')
 
 # Combine the diagonal size and resolution into the DISPLAY_SIZE variable
 DISPLAY_SIZE="${DIAGONAL_INCHES} inches, Resolution: ${RESOLUTION}"
-
-echo "Display size and resolution: $DISPLAY_SIZE"
-
 #----------------------------------------------------------------
 
 # Hard disk information (including type and available slots)
