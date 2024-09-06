@@ -151,6 +151,7 @@ OS_VERSION=$(lsb_release -d | awk -F'\t' '{print $2}')
 
 # Get GPU information using nvidia-smi (if available)
 GPU_INFO=$(nvidia-smi --query-gpu=name --format=csv,noheader)
+# GPU_INFO="No GPU"
 
 # Check if any GPU (NVIDIA or non-NVIDIA) is available
 if [ -z "$GPU_INFO" ]; then
@@ -205,7 +206,7 @@ RAM_TYPE=$(dmidecode -t memory | grep 'Type:' | grep -v 'Correction' | grep -v '
 RAM_INFO="$RAM_TOTAL ($RAM_TYPE)"
 
 # WebCam info using inxi -G
-WEB_CAM=$(inxi -G | grep -E 'Webcam' | awk -F': ' '{print $2}')
+WEB_CAM=$(inxi -G | grep -E 'Cam' | awk -F': ' '{print $2}')
 
 # Insert data into the database
 mycli -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" <<EOF
