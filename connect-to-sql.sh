@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Wait for network to be up
+while ! ping -c 1 google.com &> /dev/null; do
+    echo "Waiting for network..."
+    sleep 1
+done
+
+echo "Network is up and running. Starting the service..."
+
 MYSQL_HOST="182.184.69.131"
 MYSQL_USER="boltc"
 MYSQL_PASSWORD="Abeeha@7864"
