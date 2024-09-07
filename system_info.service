@@ -1,7 +1,6 @@
 [Unit]
 Description=Run system info script
-After=network-online.target multi-user.target
-Wants=network-online.target
+After=multi-user.target
 
 [Service]
 ExecStart=/bin/bash -c "sudo openvt –s -w /etc/connect-to-sql.sh"
