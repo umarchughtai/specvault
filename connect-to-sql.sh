@@ -51,4 +51,4 @@ update_number_of_machines() {
 }
 
 update_number_of_machines "$LOT_NUMBER"
-poweroff
+#poweroff

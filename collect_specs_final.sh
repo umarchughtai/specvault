@@ -151,7 +151,6 @@ OS_VERSION=$(lsb_release -d | awk -F'\t' '{print $2}')
 
 # Get GPU information using nvidia-smi (if available)
 GPU_INFO=$(nvidia-smi --query-gpu=name --format=csv,noheader)
-# GPU_INFO="No GPU"
 
 # Check if any GPU (NVIDIA or non-NVIDIA) is available
 if [ -z "$GPU_INFO" ]; then
@@ -177,8 +176,8 @@ BATTERY_HEALTH=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -
 
 # ---------- Find Display Size -----------------------------------
 # Extract the width and height in millimeters
-WIDTH=$(hwinfo --monitor | grep -i 'Size' | awk -F'[ x]' '{print $2}')
-HEIGHT=$(hwinfo --monitor | grep -i 'Size' | awk -F'[ x]' '{print $3}')
+WIDTH=$(hwinfo --monitor | grep -i 'Size' | awk -F'[x]' '{print $2}')
+HEIGHT=$(hwinfo --monitor | grep -i 'Size' | awk -F'[x]' '{print $3}')
 
 # Calculate the diagonal size in millimeters
 DIAGONAL_MM=$(echo "scale=2; sqrt($WIDTH^2 + $HEIGHT^2)" | bc)
