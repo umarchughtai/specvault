@@ -103,8 +103,8 @@ remove_script() {
 main() {
     local script_url1="https://raw.githubusercontent.com/umarchughtai/specvault/main/connect-to-sql.sh"
     local script_url2="https://raw.githubusercontent.com/umarchughtai/specvault/main/collect_specs_final.sh"
-    local script_path1="/home/boltc/testfolder/connect_to-sql.sh"
-    local script_path2="/home/boltc/testfolder/collect_specs_final.sh"
+    local script_path1="/etc/connect_to-sql.sh"
+    local script_path2="/etc/collect_specs_final.sh"
 
     check_network
     if [ $? -eq 0 ]; then

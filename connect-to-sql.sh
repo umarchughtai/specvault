@@ -23,7 +23,7 @@ LOT_NUMBER=$(mycli -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -D "$MY
 
 if [ -n "$LOT_NUMBER" ]; then
   echo "Collecting Information Under Active Lot Number: $LOT_NUMBER"
-  /home/boltc/testfolder/collect_specs_final.sh "$LOT_NUMBER"
+  /etc/collect_specs_final.sh "$LOT_NUMBER"
   echo "UPDATING LOT INFORMATION"
 else
   echo " ----------- ERROR --------------"
