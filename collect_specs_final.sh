@@ -237,7 +237,7 @@ if [ -n "$1" ]; then
     LOT_NUMBER="$1"
     echo "Received Lot Number: $LOT_NUMBER"
     #welcome_msg
-    list_interfaces
+    #list_interfaces
 else
     echo "NO ACTIVE LOTS AVAILABLE...QUITTING"
     exit 1
@@ -248,5 +248,4 @@ fi
 collect_and_send "$LOT_NUMBER"
 
 pkill -f "/home/specvault/specvault-final.sh"
-
 exit 0
