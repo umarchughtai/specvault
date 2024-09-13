@@ -27,7 +27,7 @@ echo " ------------------------------------------------- "
 
 # Function to list the connected network interfaces
 function list_interfaces() {
-    local wlan_interface=$(ip link show | awk -F: '$0 ~ "wlan"{print $2}' | tr -d ' ')
+    local wlan_interface=$(ip link show | awk -F: '$0 ~ "wlan0"{print $2}' | tr -d ' ')
     if [ -n "$wlan_interface" ]; then
         local ip_address=$(ip -4 addr show "$wlan_interface" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
         local ssid=$(iwgetid -r)
@@ -37,7 +37,7 @@ function list_interfaces() {
         echo " Connected SSID: $ssid"
         echo " ------------------------------ "
     else
-        local eth_interface=$(ip link show | awk -F: '$0 ~ "eth"{print $2}' | tr -d ' ')
+        local eth_interface=$(ip link show | awk -F: '$0 ~ "eth0"{print $2}' | tr -d ' ')
         if [ -n "$eth_interface" ]; then
             local ip_address=$(ip -4 addr show "$eth_interface" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
             local gateway=$(ip route | grep default | awk '{print $3}')
@@ -236,7 +236,7 @@ fi
 if [ -n "$1" ]; then
     LOT_NUMBER="$1"
     echo "Received Lot Number: $LOT_NUMBER"
-    welcome_msg
+    #welcome_msg
     list_interfaces
 else
     echo "NO ACTIVE LOTS AVAILABLE...QUITTING"
