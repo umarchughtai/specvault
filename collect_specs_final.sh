@@ -177,7 +177,7 @@ BATTERY_HEALTH=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -
 # ---------- Find Display Size -----------------------------------
 # Extract the width and height in millimeters
 SIZE_MM=$(hwinfo --monitor | grep -i 'Size' | awk '{print $2}')
-RESOLUTION=$(hwinfo --monitor | grep -i 'Resolution' | grep '@' | awk '{print $2}' | sed 's/@.*//')
+RESOLUTION=$(hwinfo --monitor | grep -i 'Resolution' | grep '@' | awk '{print $2}')
 
 # Calculate the diagonal size in millimeters
 #DIAGONAL_MM=$(echo "scale=2; sqrt($WIDTH^2 + $HEIGHT^2)" | bc)
