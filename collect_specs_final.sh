@@ -176,8 +176,8 @@ BATTERY_HEALTH=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -
 
 # ---------- Find Display Size -----------------------------------
 # Extract the width and height in millimeters
-DISPLAY_SIZE=$(hwinfo --monitor | grep -i 'Size' | awk '{print $2}')
-#HEIGHT=$(hwinfo --monitor | grep -i 'Size' | awk -F'[x]' '{print $3}')
+SIZE_MM=$(hwinfo --monitor | grep -i 'Size' | awk '{print $2}')
+RESOLUTION=$(hwinfo --monitor | grep -i 'Resolution' | grep '@' | awk '{print $2}' | sed 's/@.*//')
 
 # Calculate the diagonal size in millimeters
 #DIAGONAL_MM=$(echo "scale=2; sqrt($WIDTH^2 + $HEIGHT^2)" | bc)
@@ -186,12 +186,11 @@ DISPLAY_SIZE=$(hwinfo --monitor | grep -i 'Size' | awk '{print $2}')
 #DIAGONAL_INCHES=$(echo "scale=2; $DIAGONAL_MM / 25.4" | bc)
 
 # Extract the resolution
-HORIZONTAL=$(hwinfo --monitor | grep -i 'Horizontal' | awk -F' ' '{print $2}')
-VERTICAL=$(hwinfo --monitor | grep -i 'Vertical' | awk -F ' ' '{print$2}')
-RESOLUTION=$("{$HORIZONTAL} x {$VERTICAL}")
-
+#HORIZONTAL=$(hwinfo --monitor | grep -i 'Horizontal' | awk -F' ' '{print $2}')
+#VERTICAL=$(hwinfo --monitor | grep -i 'Vertical' | awk -F ' ' '{print$2}')
+ 
 # Combine the diagonal size and resolution into the DISPLAY_SIZE variable
-#DISPLAY_SIZE="${DIAGONAL_INCHES} inches, Resolution: ${RESOLUTION}"
+DISPLAY_SIZE="${SIZE_MM} mm, Resolution: ${RESOLUTION}"
 #----------------------------------------------------------------
 
 # Hard disk information (including type and available slots)
