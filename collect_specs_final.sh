@@ -186,7 +186,9 @@ DISPLAY_SIZE=$(hwinfo --monitor | grep -i 'Size' | awk '{print $2}')
 #DIAGONAL_INCHES=$(echo "scale=2; $DIAGONAL_MM / 25.4" | bc)
 
 # Extract the resolution
-#RESOLUTION=$(hwinfo --monitor | grep -i 'Resolution' | awk -F': ' '{print $2}')
+HORIZONTAL=$(hwinfo --monitor | grep -i 'Horizontal' | awk -F' ' '{print $2}')
+VERTICAL=$(hwinfo --monitor | grep -i 'Vertical' | awk -F ' ' '{print$2}')
+RESOLUTION=$("{$HORIZONTAL} x {$VERTICAL}")
 
 # Combine the diagonal size and resolution into the DISPLAY_SIZE variable
 #DISPLAY_SIZE="${DIAGONAL_INCHES} inches, Resolution: ${RESOLUTION}"
