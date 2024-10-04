@@ -5,11 +5,11 @@ if nmcli -t -f WIFI g | grep -q "enabled" && nmcli -t -f IP4.ADDRESS dev show | 
     echo "Wi-Fi is already connected. Running the main script..."
     /path/to/your/main_script.sh
 else
-    # Start the Network Manager applet
-    nm-applet &
+    # Start nmtui to connect to Wi-Fi
+    echo "Please connect to a Wi-Fi network using nmtui."
+    sudo nmtui-connect
 
     # Wait for the user to connect to Wi-Fi
-    echo "Please connect to a Wi-Fi network using the Network Manager applet."
     while ! nmcli -t -f WIFI g | grep -q "enabled"; do
         sleep 1
     done
