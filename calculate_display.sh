@@ -1,32 +1,25 @@
 #!/bin/bash
 
-# ---------- Find Display Size -----------------------------------
-# Extract the width and height in millimeters
-WIDTH=$(hwinfo --monitor | grep -i 'Size' | awk -F'[x]' '{print $2}' | tr -d '[:space:]')
-HEIGHT=$(hwinfo --monitor | grep -i 'Size' | awk -F'[x]' '{print $3}' | tr -d '[:space:]')
+# Check if Wi-Fi is connected
+if nmcli -t -f WIFI g | grep -q "enabled" && nmcli -t -f IP4.ADDRESS dev show | grep -q "IP4.ADDRESS"; then
+    echo "Wi-Fi is already connected. Running the main script..."
+    /path/to/your/main_script.sh
+else
+    # Start the Network Manager applet
+    nm-applet &
 
-# Convert width and height to numeric values
-WIDTH=$(echo "$WIDTH" | awk '{print int($1)}')
-HEIGHT=$(echo "$HEIGHT" | awk '{print int($1)}')
+    # Wait for the user to connect to Wi-Fi
+    echo "Please connect to a Wi-Fi network using the Network Manager applet."
+    while ! nmcli -t -f WIFI g | grep -q "enabled"; do
+        sleep 1
+    done
 
-# Ensure WIDTH and HEIGHT are numbers
-if ! [[ "$WIDTH" =~ ^[0-9]+$ ]] || ! [[ "$HEIGHT" =~ ^[0-9]+$ ]]; then
-    echo "Error: Width and Height must be numeric values."
-    exit 1
+    # Wait for an IP address to be assigned
+    while ! nmcli -t -f IP4.ADDRESS dev show | grep -q "IP4.ADDRESS"; do
+        echo "Waiting for IP address..."
+        sleep 1
+    done
+
+    echo "Wi-Fi connected and IP address obtained. Running the main script..."
+    /path/to/your/main_script.sh
 fi
-
-# Calculate the diagonal size in millimeters
-DIAGONAL_MM=$(echo "scale=2; sqrt($WIDTH^2 + $HEIGHT^2)" | bc)
-
-# Convert the diagonal size from millimeters to inches (1 inch = 25.4 mm)
-DIAGONAL_INCHES=$(echo "scale=2; $DIAGONAL_MM / 25.4" | bc)
-
-# Extract the resolution
-RESOLUTION=$(hwinfo --monitor | grep -i 'Resolution' | awk -F': ' '{print $2}' | tr -d '[:space:]')
-
-# Combine the diagonal size and resolution into the DISPLAY_SIZE variable
-DISPLAY_SIZE="${DIAGONAL_INCHES} inches, Resolution: ${RESOLUTION}"
-
-# Output the display size
-echo "Display Size: $DISPLAY_SIZE"
-#----------------------------------------------------------------
